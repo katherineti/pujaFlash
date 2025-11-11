@@ -43,4 +43,7 @@ export interface Plan {
     price: string;
     renewalDate: string;
     features?: string[];
+
+    // AÑADE ESTA LÍNEA:
+    popular?: boolean; // Habilita el campo 'popular' que causó el error
 }
