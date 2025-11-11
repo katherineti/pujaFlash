@@ -7,6 +7,12 @@ on:
 
 jobs:
   build_and_deploy:
+# ASEGÚRATE DE AÑADIR ESTO:
+    permissions:
+      contents: write # Permite la escritura en el repositorio (CLAVE)
+      pages: write   # Permite la escritura en la sección de Pages
+      id-token: write # Necesario para la autenticación
+
     runs-on: ubuntu-latest
 
     steps:
