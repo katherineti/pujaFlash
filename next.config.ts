@@ -1,6 +1,9 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  devIndicators: {
+    devtools: false, 
+} as any,
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
