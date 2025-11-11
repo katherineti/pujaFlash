@@ -11,6 +11,7 @@ import { Check, Gift, Tv, Film, WifiOff, Users, Play, Star, Globe, Loader2 } fro
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from './ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { PricingModal } from './pricing-modal';
+import { AppProvider } from '@/context/app-context';
 
 const features = [
     { icon: Film, text: "Películas 4K" },
@@ -97,14 +98,29 @@ export function PremiumAdModal({ setDialogOpen }: PremiumAdModalProps) {
 
             <div className="mt-6">
             <h3 className="font-bold text-lg">¿Qué incluye?</h3>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 text-sm">
-                {features.map((feature) => (
-                <li key={feature.text} className="flex items-center gap-2">
-                    {React.isValidElement(feature.icon) ? feature.icon : <feature.icon className="h-4 w-4 text-green-500" />}
-                    <span className="text-muted-foreground">{feature.text}</span>
-                </li>
-                ))}
-            </ul>
+<ul className="grid grid-cols-2 gap-x-4 gap-y-2 mt-3 text-sm">
+{features.map((feature) => {
+        // Desestructuramos el icono del feature
+        const { icon: Icon } = feature; 
+        
+        // Hacemos un cast para que TypeScript acepte el uso condicional de React.isValidElement
+        const IconComponent = Icon as React.ElementType; 
+
+        return (
+            <li key={feature.text} className="flex items-center gap-2">
+                {/* 1. Si es un elemento React (el SVG), lo devolvemos directamente. */}
+                {React.isValidElement(Icon) ? (
+                    Icon
+                ) : (
+                    // 2. Si no es un elemento, DEBE ser el componente Lucide,
+                    // y lo renderizamos usando la variable casteada (IconComponent)
+                    <IconComponent className="h-4 w-4 text-green-500" />
+                )}
+                <span className="text-muted-foreground">{feature.text}</span>
+            </li>
+        );
+    })}
+</ul>
             </div>
             
             <div className="mt-6">
@@ -152,7 +168,9 @@ export function PremiumAdModal({ setDialogOpen }: PremiumAdModalProps) {
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-4xl p-0">
-                    <PricingModal />
+                    <AppProvider>
+                        <PricingModal setDialogOpen={setPricingDialogOpen} />
+                    </AppProvider>
                 </DialogContent>
             </Dialog>
 

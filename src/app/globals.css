@@ -158,3 +158,17 @@ body {
     top: 0;
     left: 0;
 }
+
+/* en caso de que   devIndicators: false no funcione */
+/* Oculta la interfaz de las DevTools de Next.js (el botón 'N' flotante) */
+.nextjs-call-to-action-panel {
+  display: none !important;
+}
+/* Opcional: Oculta también el indicador de errores (toast) */
+div.nextjs-toast {
+    display: none !important;
+}
+/* Oculta la interfaz de las DevTools de Next.js (el botón 'N' flotante) */
+.nextjs-call-to-action-panel {
+  display: none !important;
+}

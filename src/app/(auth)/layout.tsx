@@ -1,6 +1,7 @@
 
 'use client';
 
+import { AppProvider } from '@/context/app-context';
 import { FirebaseClientProvider } from '@/firebase';
 import { ParticlesBackground } from '@/components/landing/particles-background';
 
@@ -11,10 +12,12 @@ export default function AuthLayout({
 }) {
   return (
     <FirebaseClientProvider>
-      <div className="relative min-h-svh w-full bg-slate-900">
-        <ParticlesBackground />
-        <div className="relative z-10">{children}</div>
-      </div>
+      <AppProvider>
+        <div className="relative min-h-svh w-full bg-slate-900">
+          <ParticlesBackground />
+          <div className="relative z-10">{children}</div>
+        </div>
+      </AppProvider>
     </FirebaseClientProvider>
   );
 }

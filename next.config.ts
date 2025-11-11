@@ -1,9 +1,8 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  devIndicators: {
-    devtools: false, 
-} as any,
+  devIndicators: false, //eliminamos la interfaz de las DevTools de Next.js (el botón 'N' flotante)
+
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
