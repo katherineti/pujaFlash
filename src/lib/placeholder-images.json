@@ -1,0 +1,34 @@
+{
+  "placeholderImages": [
+    {
+      "id": "login-ad",
+      "description": "Una imagen abstracta de una red de conexiones digitales, representando un sistema de pujas de anuncios.",
+      "imageUrl": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "red datos"
+    },
+    {
+      "id": "dashboard-ad",
+      "description": "Banner de anuncio mostrado en el tablero",
+      "imageUrl": "https://images.unsplash.com/photo-1652249418530-f5efa38f9d06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmYXNoaW9uJTIwc2FsZXxlbnwwfHx8fDE3NjI0MjY2ODV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "moda venta"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Marcador de posición para el avatar del usuario",
+      "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjIzNzk2MTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "persona retrato"
+    },
+    {
+      "id": "bella-vista-ad",
+      "description": "Anuncio del restaurante Bella Vista",
+      "imageUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "restaurante comida"
+    },
+    {
+      "id": "tech-store-ad",
+      "description": "Anuncio de la tienda de tecnología TechStore",
+      "imageUrl": "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?q=80&w=1080&auto=format&fit=crop",
+      "imageHint": "laptop tecnología"
+    }
+  ]
+}

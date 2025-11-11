@@ -1,0 +1,240 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the captive portal system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "username": {
+          "type": "string",
+          "description": "The username of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the user.",
+          "format": "email"
+        },
+        "registrationDate": {
+          "type": "string",
+          "description": "The date and time the user registered.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email",
+        "registrationDate"
+      ]
+    },
+    "Ad": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Ad",
+      "type": "object",
+      "description": "Represents an advertisement displayed in the captive portal.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the advertisement."
+        },
+        "advertiserId": {
+          "type": "string",
+          "description": "Reference to the Advertiser. (Relationship: Advertiser 1:N Ad)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the advertisement."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the image for the advertisement.",
+          "format": "uri"
+        },
+        "videoUrl": {
+          "type": "string",
+          "description": "URL of the video for the advertisement.",
+          "format": "uri"
+        },
+        "clickUrl": {
+          "type": "string",
+          "description": "URL to redirect to when the ad is clicked.",
+          "format": "uri"
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The date and time the advertisement starts being displayed.",
+          "format": "date-time"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "The date and time the advertisement stops being displayed.",
+          "format": "date-time"
+        },
+        "bidPrice": {
+          "type": "number",
+          "description": "The bid price for the advertisement (cost per click)."
+        }
+      },
+      "required": [
+        "id",
+        "advertiserId",
+        "name",
+        "clickUrl",
+        "startDate",
+        "endDate",
+        "bidPrice"
+      ]
+    },
+    "Advertiser": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Advertiser",
+      "type": "object",
+      "description": "Represents an advertiser who places ads in the captive portal.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the advertiser."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the advertising company."
+        },
+        "contactEmail": {
+          "type": "string",
+          "description": "The contact email address for the advertiser.",
+          "format": "email"
+        },
+        "paymentInformation": {
+          "type": "string",
+          "description": "Payment details for the advertiser. Consider storing only a reference to payment details rather than the actual details for security."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "contactEmail",
+        "paymentInformation"
+      ]
+    },
+    "ClickEvent": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ClickEvent",
+      "type": "object",
+      "description": "Represents a click event on an advertisement.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the click event."
+        },
+        "adId": {
+          "type": "string",
+          "description": "Reference to the Ad. (Relationship: Ad 1:N ClickEvent)"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User. (Relationship: User 1:N ClickEvent)"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The date and time the click event occurred.",
+          "format": "date-time"
+        },
+        "ipAddress": {
+          "type": "string",
+          "description": "The IP address of the user who clicked the ad."
+        }
+      },
+      "required": [
+        "id",
+        "adId",
+        "userId",
+        "timestamp",
+        "ipAddress"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "user",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Path-based ownership for private user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advertisers/{advertiserId}",
+        "definition": {
+          "entityName": "advertiser",
+          "schema": {
+            "$ref": "#/backend/entities/Advertiser"
+          },
+          "description": "Stores advertiser profiles.",
+          "params": [
+            {
+              "name": "advertiserId",
+              "description": "The unique identifier of the advertiser."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/ads/{adId}",
+        "definition": {
+          "entityName": "ad",
+          "schema": {
+            "$ref": "#/backend/entities/Ad"
+          },
+          "description": "Stores advertisement details.",
+          "params": [
+            {
+              "name": "adId",
+              "description": "The unique identifier of the advertisement."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/ads/{adId}/clickEvents/{clickEventId}",
+        "definition": {
+          "entityName": "clickEvent",
+          "schema": {
+            "$ref": "#/backend/entities/ClickEvent"
+          },
+          "description": "Stores click event data for each ad. Includes denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "adId",
+              "description": "The unique identifier of the advertisement."
+            },
+            {
+              "name": "clickEventId",
+              "description": "The unique identifier of the click event."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability. User data is stored under `/users/{userId}`, providing a clear ownership model. Advertisers and Ads are separated into their own collections (`/advertisers` and `/ads`) to avoid mixing data with different access requirements, which aligns with the Structural Segregation principle. Click events, which are tied to both Ads and Users, are stored in a subcollection `/ads/{adId}/clickEvents/{clickEventId}` and also include denormalized `userId` for efficient querying. This setup facilitates secure list operations (QAPs) and avoids the need for complex filtering in rules. By including `userId` in the ClickEvent, it enables independent authorization without relying on parent document data, achieving Authorization Independence."
+  }
+}

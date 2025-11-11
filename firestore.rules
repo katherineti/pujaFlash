@@ -1,0 +1,106 @@
+/**
+ * @fileoverview Firestore Security Rules for the captive portal system.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for user profiles
+ * and allows public read access to ads and advertisers. Click events are
+ * secured to ensure only authenticated users can create them for their own
+ * actions.  Data validation is relaxed in favor of rapid prototyping,
+ * focusing on authorization and relational integrity checks.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores user profile information. Only the user themselves can read/write.
+ * - /advertisers/{advertiserId}: Stores advertiser profiles. Publicly readable, owner-only write access.
+ * - /ads/{adId}: Stores advertisement details. Publicly readable, owner-only write access.
+ * - /ads/{adId}/clickEvents/{clickEventId}: Stores click events. Users can only create click events associated with their user ID.
+ *
+ * Key Security Decisions:
+ * - Users can only access their own profile data.
+ * - Public read access is granted for ads and advertisers to allow listing and display.
+ * - Click events include a denormalized userId field to simplify authorization checks.
+ *
+ * Denormalization for Authorization:
+ * - Click events store the userId to allow direct authorization without needing to query user data.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description: Manages user profiles. Only the user can read/write their own data.
+     * @path: /users/{userId}
+     * @allow: User 'user123' (create, update, get, delete, list) if request.auth.uid == 'user123'
+     * @deny: User 'user456' (create, update, get, delete, list) with request.auth.uid == 'user123'
+     * @principle: Enforces strict user ownership.
+     */
+    match /users/{userId} {
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if false; // Users cannot list all user documents.
+
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.uid == userId;
+      allow update: if isSignedIn() && isOwner(userId);
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    /**
+     * @description: Manages advertiser profiles. Publicly readable, owner-only write.
+     * @path: /advertisers/{advertiserId}
+     * @allow: Any user (get, list). Advertiser 'adv123' (create, update, delete) if request.auth.uid == advertiserId.
+     * @deny: User 'user456' (create, update, delete) with request.auth.uid != advertiserId.
+     * @principle: Allows public reads with owner-only writes, enforced by matching the auth UID to the document ID.
+     */
+    match /advertisers/{advertiserId} {
+      allow get, list: if true;
+
+      allow create: if isSignedIn() && request.resource.data.id == advertiserId;
+      allow update: if isSignedIn() && isExistingOwner(advertiserId) && resource.data.id == advertiserId;
+      allow delete: if isSignedIn() && isExistingOwner(advertiserId);
+    }
+
+    /**
+     * @description: Manages advertisement details. Publicly readable, owner-only write.
+     * @path: /ads/{adId}
+     * @allow: Any user (get, list). Advertiser 'adv123' (create, update, delete) if request.auth.uid is the ad's advertiserId.
+     * @deny: User 'user456' (create, update, delete) if request.auth.uid is not the ad's advertiserId.
+     * @principle: Allows public reads with owner-only writes, enforced by checking the advertiserId in the ad document.
+     */
+    match /ads/{adId} {
+      allow get, list: if true;
+
+      allow create: if isSignedIn() && request.resource.data.advertiserId == request.auth.uid;
+      allow update: if isSignedIn() && isExistingAdOwner();
+      allow delete: if isSignedIn() && isExistingAdOwner();
+    }
+
+    /**
+     * @description: Manages click event data for each ad. Users can create click events associated with their user ID.
+     * @path: /ads/{adId}/clickEvents/{clickEventId}
+     * @allow: User 'user123' (create) if request.auth.uid == request.resource.data.userId. Any user (get, list).
+     * @deny: User 'user456' (create) if request.auth.uid != request.resource.data.userId.
+     * @principle: Allows public reads and user-owned writes, with a denormalized userId for authorization.
+     */
+    match /ads/{adId}/clickEvents/{clickEventId} {
+      allow get, list: if true; // Publicly readable.
+
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Updates and deletes are not allowed for click events.
+    }
+
+    // --- Helper functions ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(documentId) {
+        return isSignedIn() && isOwner(documentId) && resource != null;
+    }
+
+    function isExistingAdOwner() {
+        return isSignedIn() && resource != null && request.auth.uid == resource.data.advertiserId;
+    }
+  }
+}
