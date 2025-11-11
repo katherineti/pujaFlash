@@ -79,12 +79,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 {menuItems.map((item) => (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
-                      href={item.href}
                       asChild
                       isActive={pathname === item.href}
                       tooltip={item.label}
                     >
-                      <Link href={item.href}>
+                      {/* El Link de Next.js es el que lleva la propiedad href. 
+                          El SidebarMenuButton utiliza 'asChild' para aplicar estilos. */}
+                      <Link href={item.href}> 
                         <item.icon />
                         <span>{item.label}</span>
                       </Link>
