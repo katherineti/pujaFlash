@@ -13,6 +13,13 @@ import { useState } from 'react';
 import { campaignsData } from '@/lib/campaign-data';
 import { Campaign } from '@/lib/types';
 
+// Define el tipo que viene del formulario (el tipo que el error te da)
+interface NewCampaignData {
+    endDate: Date;
+    name: string;
+    budget: number;
+}
+
 const statusVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
   'Activa': 'default',
   'Pausada': 'secondary',
@@ -30,6 +37,7 @@ const statusColor: { [key: string]: string } = {
 export default function CampanasPage() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [campaigns, setCampaigns] = useState(campaignsData);
+
 /* 
     const handleCampaignCreate = (newCampaign: NewCampaign) => {
         const campaignToAdd = {
@@ -43,7 +51,31 @@ export default function CampanasPage() {
         setCampaigns(prevCampaigns => [...prevCampaigns, campaignToAdd]);
     }; */
 
-const CampaignToAdd: Campaign = { // <--- Aserción de tipo aquí
+// La función ahora DEBE recibir solo los datos que el formulario le pasa (NewCampaignData)
+// 1. La función debe aceptar SÓLO los campos del formulario (NewCampaignData)
+    const handleCampaignCreate = (newCampaignData: NewCampaignData) => { 
+        
+        // 2. CREAR el objeto Campaign COMPLETO (añadiendo las propiedades por defecto)
+        const campaignToAdd: Campaign = { 
+            // Campos que vienen del formulario
+            name: newCampaignData.name,
+            budget: newCampaignData.budget,
+            endDate: newCampaignData.endDate,
+            
+            // Campos por defecto (Status, métricas, etc.)
+            status: "Borrador", // Debe ser uno de los literales válidos
+            spend: 0,
+            clicks: 0,
+            cpc: 0,
+            ctr: 0,
+            // Asegúrate de incluir TODAS las propiedades que la interfaz Campaign requiera
+        } as Campaign; 
+
+        // 3. Actualizar el estado con el objeto Campaign completo
+        setCampaigns(prevCampaigns => [...prevCampaigns, campaignToAdd]);
+    };
+/* 
+const handleCampaignCreate: Campaign = { // <--- Aserción de tipo aquí
         name: "Nueva Campaña",
         status: "Borrador", // Ya que es un literal, es compatible.
         spend: 0,
@@ -53,7 +85,7 @@ const CampaignToAdd: Campaign = { // <--- Aserción de tipo aquí
         budget: 0,
         endDate: new Date(),
         // Asegúrate de incluir todas las propiedades requeridas por la interfaz Campaign
-    } as Campaign;
+    } as Campaign; */
 
   return (
     <div className="flex flex-1 flex-col gap-4 bg-background p-4 sm:p-6 md:gap-8">

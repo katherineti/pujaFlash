@@ -41,8 +41,13 @@ const formSchema = z.object({
 export type NewCampaign = z.infer<typeof formSchema>;
 
 interface CreateCampaignFormProps {
-  setDialogOpen: (open: boolean) => void;
-  onCampaignCreate: (campaign: NewCampaign) => void;
+    setDialogOpen: (open: boolean) => void;
+    // Asegúrate de que el tipo aquí coincide con lo que el formulario envía
+    onCampaignCreate: (campaign: { 
+        name: string; 
+        budget: number; 
+        endDate: Date;
+    }) => void; // <--- Esta es la firma que el error está pidiendo
 }
 
 
