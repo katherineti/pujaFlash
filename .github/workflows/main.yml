@@ -1,0 +1,41 @@
+name: Deploy Next.js Static to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master # Cambia a 'main' si esa es tu rama principal
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout: Descarga el código
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node: Configura el entorno de Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' 
+          cache: 'npm' # Usa caché para acelerar instalaciones
+
+      # 3. Install: Instala las dependencias
+      - name: Install Dependencies
+        run: npm install
+
+      # 4. Build: Compila el proyecto. La configuración en next.config.js 
+      #    (output: 'export') hace que se cree la carpeta 'out/'.
+      - name: Build Next.js Project (Static Export)
+        run: npm run build
+        
+      # 5. Deploy: Despliega el contenido de la carpeta 'out' a la rama 'gh-pages'
+      #    Esta acción gestiona la creación de la rama gh-pages y el hosting.
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: success()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out  # Directorio de salida del build estático
+          publish_branch: gh-pages
