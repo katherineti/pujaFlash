@@ -7,11 +7,11 @@ on:
 
 jobs:
   build_and_deploy:
-# ASEGÚRATE DE AÑADIR ESTO:
+    # CLAVE: La sintaxis de permissions debe ir ANTES de runs-on
     permissions:
-      contents: write # Permite la escritura en el repositorio (CLAVE)
-      pages: write   # Permite la escritura en la sección de Pages
-      id-token: write # Necesario para la autenticación
+      contents: read  # Permite leer el código fuente
+      pages: write    # Permite subir a GitHub Pages (Esencial)
+      id-token: write # Permite la autenticación
 
     runs-on: ubuntu-latest
 
@@ -31,17 +31,26 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # 4. Build: Compila el proyecto. La configuración en next.config.js 
-      #    (output: 'export') hace que se cree la carpeta 'out/'.
+      # 4. Build: Compila el proyecto estático (Crea la carpeta 'out/')
       - name: Build Next.js Project (Static Export)
         run: npm run build
         
-      # 5. Deploy: Despliega el contenido de la carpeta 'out' a la rama 'gh-pages'
-      #    Esta acción gestiona la creación de la rama gh-pages y el hosting.
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: success()
+      # === INICIO DEL NUEVO MÉTODO DE DESPLIEGUE OFICIAL ===
+      
+      # 5. Configurar el entorno de Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 6. Subir el Artefacto (el contenido de la carpeta 'out')
+      #    Nota: El nombre del artefacto es 'github-pages' por convención
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out  # Directorio de salida del build estático
-          publish_branch: gh-pages
+          path: './out' # El directorio estático generado por Next.js
+
+      # 7. Desplegar a GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        
+      # === FIN DEL NUEVO MÉTODO DE DESPLIEGUE OFICIAL ===
