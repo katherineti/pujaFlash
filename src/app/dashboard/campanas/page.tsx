@@ -11,6 +11,7 @@ import { CreateCampaignForm, type NewCampaign } from '@/components/dashboard/cre
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { campaignsData } from '@/lib/campaign-data';
+import { Campaign } from '@/lib/types';
 
 const statusVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
   'Activa': 'default',
@@ -29,7 +30,7 @@ const statusColor: { [key: string]: string } = {
 export default function CampanasPage() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [campaigns, setCampaigns] = useState(campaignsData);
-
+/* 
     const handleCampaignCreate = (newCampaign: NewCampaign) => {
         const campaignToAdd = {
             ...newCampaign,
@@ -40,7 +41,19 @@ export default function CampanasPage() {
             ctr: 0,
         };
         setCampaigns(prevCampaigns => [...prevCampaigns, campaignToAdd]);
-    };
+    }; */
+
+const CampaignToAdd: Campaign = { // <--- Aserción de tipo aquí
+        name: "Nueva Campaña",
+        status: "Borrador", // Ya que es un literal, es compatible.
+        spend: 0,
+        clicks: 0,
+        cpc: 0,
+        ctr: 0,
+        budget: 0,
+        endDate: new Date(),
+        // Asegúrate de incluir todas las propiedades requeridas por la interfaz Campaign
+    } as Campaign;
 
   return (
     <div className="flex flex-1 flex-col gap-4 bg-background p-4 sm:p-6 md:gap-8">

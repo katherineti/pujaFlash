@@ -13,7 +13,8 @@ export type RevenueData = {
 
 export type Campaign = {
     name: string;
-    status: 'Activa' | 'Pausada' | 'Finalizada' | 'Borrador';
+    // status: 'Activa' | 'Pausada' | 'Finalizada' | 'Borrador';
+    status: string;
     budget: number;
     spend: number;
     clicks: number;
