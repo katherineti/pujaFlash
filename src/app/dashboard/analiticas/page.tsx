@@ -115,7 +115,7 @@ export default function AnaliticasPage() {
             <OverviewChart />
           </div>
         </div>
-        <AIOptimizer />
+        {/* <AIOptimizer />  // componente de 'Optimizador de Ubicación de Anuncios con IA'   */}
       </main>
     </div>
   );
