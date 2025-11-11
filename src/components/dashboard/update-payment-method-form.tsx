@@ -78,7 +78,7 @@ export function UpdatePaymentMethodForm({
         cardNumber: currentCardInfo.cardNumber,
         expiryDate: currentCardInfo.expiryDate,
         cvc: currentCardInfo.cvc,
-        phoneNumber: currentPhoneNumber.includes('...') ? '' : currentPhoneNumber,
+        // phoneNumber: currentPhoneNumber.includes('...') ? '' : currentPhoneNumber,
     },
   });
 
