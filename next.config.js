@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // CLAVE: Esto asegura que Next.js genere la carpeta 'out' para GitHub Pages.
-  output: 'export', 
+//   output: 'export', 
   
   // CLAVE: Deshabilita la característica incompatible con el Static Export.
   // Esto evita que el compilador se queje si detecta la sintaxis 'use server'.
