@@ -14,6 +14,19 @@ const nextConfig = {
   // devIndicators: {
   //   buildActivity: false,
   // },
+
+// Configuración de las imágenes
+  images: {
+    // Lista de dominios desde donde se permiten cargar imágenes externas.
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com', // ¡Añade este dominio!
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  }
 };
 
 module.exports = nextConfig;
