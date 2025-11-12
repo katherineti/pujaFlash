@@ -14,7 +14,7 @@ import { campaignsData } from '@/lib/campaign-data';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Campaign } from '@/lib/types';
 
-// Define el tipo que viene del formulario 
+// Define el tipo que viene del formulario
 interface NewCampaignData {
   endDate: Date;
   name: string;
@@ -38,23 +38,7 @@ const statusColor: { [key: string]: string } = {
 export default function CampanasPage() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [campaigns, setCampaigns] = useState<Campaign[]>(campaignsData);
-/* 
-    const handleCampaignCreate = (newCampaign: NewCampaign) => {
-        const { endDate, ...restOfCampaign } = newCampaign;
-        const campaignToAdd: Campaign = {
-            ...restOfCampaign,
-            endDate: endDate,
-            status: 'Borrador',
-            spend: 0,
-            clicks: 0,
-            cpc: 0,
-            ctr: 0,
-        };
-        setCampaigns(prevCampaigns => [...prevCampaigns, campaignToAdd]);
-    }; */
 
-// La función ahora DEBE recibir solo los datos que el formulario le pasa (NewCampaignData)
-// 1. La función debe aceptar SÓLO los campos del formulario (NewCampaignData)
 const handleCampaignCreate = (newCampaignData: NewCampaignData) => { 
         
   // 2. CREAR el objeto Campaign COMPLETO (añadiendo las propiedades por defecto)
@@ -112,11 +96,11 @@ const handleCampaignCreate = (newCampaignData: NewCampaignData) => {
                 <Table>
                 <TableHeader>
                     <TableRow>
-                    <TableHead className="min-w-[200px]">Nombre</TableHead>
-                    <TableHead className="text-center">Estado</TableHead>
-                    <TableHead className="text-right whitespace-nowrap">Presupuesto</TableHead>
-                    <TableHead className="text-right whitespace-nowrap">Gasto</TableHead>
-                    <TableHead className="text-right">
+                    <TableHead>Nombre</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead>Presupuesto</TableHead>
+                    <TableHead>Gasto</TableHead>
+                    <TableHead>
                         <Tooltip>
                             <TooltipTrigger className="flex items-center gap-1 cursor-pointer">
                                 <span>Clics</span>
@@ -127,7 +111,7 @@ const handleCampaignCreate = (newCampaignData: NewCampaignData) => {
                             </TooltipContent>
                         </Tooltip>
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead>
                         <Tooltip>
                             <TooltipTrigger className="flex items-center gap-1 cursor-pointer">
                                 <span>CPC Promedio</span>
@@ -138,7 +122,7 @@ const handleCampaignCreate = (newCampaignData: NewCampaignData) => {
                             </TooltipContent>
                         </Tooltip>
                     </TableHead>
-                    <TableHead className="text-right">
+                    <TableHead>
                         <Tooltip>
                             <TooltipTrigger className="flex items-center gap-1 cursor-pointer">
                                 <span>CTR</span>
@@ -155,16 +139,16 @@ const handleCampaignCreate = (newCampaignData: NewCampaignData) => {
                     {campaigns.map((campaign) => (
                     <TableRow key={campaign.name}>
                         <TableCell className="font-medium">{campaign.name}</TableCell>
-                        <TableCell className="text-center">
+                        <TableCell>
                         <Badge variant={statusVariant[campaign.status]} className={`${statusColor[campaign.status]} hover:${statusColor[campaign.status]}`}>
                             {campaign.status}
                         </Badge>
                         </TableCell>
-                        <TableCell className="text-right whitespace-nowrap">${campaign.budget.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</TableCell>
-                        <TableCell className="text-right whitespace-nowrap">${campaign.spend.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</TableCell>
-                        <TableCell className="text-right whitespace-nowrap">{campaign.clicks.toLocaleString('es-ES')}</TableCell>
-                        <TableCell className="text-right whitespace-nowrap">${campaign.cpc.toFixed(2)}</TableCell>
-                        <TableCell className="text-right whitespace-nowrap">{campaign.ctr.toFixed(1)}%</TableCell>
+                        <TableCell className="whitespace-nowrap">${campaign.budget.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="whitespace-nowrap">${campaign.spend.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="whitespace-nowrap">{campaign.clicks.toLocaleString('es-ES')}</TableCell>
+                        <TableCell className="whitespace-nowrap">${campaign.cpc.toFixed(2)}</TableCell>
+                        <TableCell className="whitespace-nowrap">{campaign.ctr.toFixed(1)}%</TableCell>
                     </TableRow>
                     ))}
                 </TableBody>
