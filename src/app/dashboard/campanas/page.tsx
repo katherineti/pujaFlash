@@ -6,18 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Info } from 'lucide-react';
 import { CreateCampaignForm, type NewCampaign } from '@/components/dashboard/create-campaign-form';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { campaignsData } from '@/lib/campaign-data';
-import { Campaign } from '@/lib/types';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import type { Campaign } from '@/lib/types';
 
-// Define el tipo que viene del formulario (el tipo que el error te da)
+// Define el tipo que viene del formulario 
 interface NewCampaignData {
-    endDate: Date;
-    name: string;
-    budget: number;
+  endDate: Date;
+  name: string;
+  budget: number;
 }
 
 const statusVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
@@ -36,12 +37,13 @@ const statusColor: { [key: string]: string } = {
 
 export default function CampanasPage() {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [campaigns, setCampaigns] = useState(campaignsData);
-
+    const [campaigns, setCampaigns] = useState<Campaign[]>(campaignsData);
 /* 
     const handleCampaignCreate = (newCampaign: NewCampaign) => {
-        const campaignToAdd = {
-            ...newCampaign,
+        const { endDate, ...restOfCampaign } = newCampaign;
+        const campaignToAdd: Campaign = {
+            ...restOfCampaign,
+            endDate: endDate,
             status: 'Borrador',
             spend: 0,
             clicks: 0,
@@ -53,39 +55,27 @@ export default function CampanasPage() {
 
 // La función ahora DEBE recibir solo los datos que el formulario le pasa (NewCampaignData)
 // 1. La función debe aceptar SÓLO los campos del formulario (NewCampaignData)
-    const handleCampaignCreate = (newCampaignData: NewCampaignData) => { 
+const handleCampaignCreate = (newCampaignData: NewCampaignData) => { 
         
-        // 2. CREAR el objeto Campaign COMPLETO (añadiendo las propiedades por defecto)
-        const campaignToAdd: Campaign = { 
-            // Campos que vienen del formulario
-            name: newCampaignData.name,
-            budget: newCampaignData.budget,
-            endDate: newCampaignData.endDate,
-            
-            // Campos por defecto (Status, métricas, etc.)
-            status: "Borrador", // Debe ser uno de los literales válidos
-            spend: 0,
-            clicks: 0,
-            cpc: 0,
-            ctr: 0,
-            // Asegúrate de incluir TODAS las propiedades que la interfaz Campaign requiera
-        } as Campaign; 
+  // 2. CREAR el objeto Campaign COMPLETO (añadiendo las propiedades por defecto)
+  const campaignToAdd: Campaign = { 
+      // Campos que vienen del formulario
+      name: newCampaignData.name,
+      budget: newCampaignData.budget,
+      endDate: newCampaignData.endDate,
+      
+      // Campos por defecto (Status, métricas, etc.)
+      status: "Borrador", // Debe ser uno de los literales válidos
+      spend: 0,
+      clicks: 0,
+      cpc: 0,
+      ctr: 0,
+      // Asegúrate de incluir TODAS las propiedades que la interfaz Campaign requiera
+  } as Campaign; 
 
-        // 3. Actualizar el estado con el objeto Campaign completo
-        setCampaigns(prevCampaigns => [...prevCampaigns, campaignToAdd]);
-    };
-/* 
-const handleCampaignCreate: Campaign = { // <--- Aserción de tipo aquí
-        name: "Nueva Campaña",
-        status: "Borrador", // Ya que es un literal, es compatible.
-        spend: 0,
-        clicks: 0,
-        cpc: 0,
-        ctr: 0,
-        budget: 0,
-        endDate: new Date(),
-        // Asegúrate de incluir todas las propiedades requeridas por la interfaz Campaign
-    } as Campaign; */
+  // 3. Actualizar el estado con el objeto Campaign completo
+  setCampaigns(prevCampaigns => [...prevCampaigns, campaignToAdd]);
+};
 
   return (
     <div className="flex flex-1 flex-col gap-4 bg-background p-4 sm:p-6 md:gap-8">
@@ -118,36 +108,68 @@ const handleCampaignCreate: Campaign = { // <--- Aserción de tipo aquí
             </Dialog>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-[200px]">Nombre</TableHead>
-                  <TableHead className="text-center">Estado</TableHead>
-                  <TableHead className="text-right whitespace-nowrap">Presupuesto</TableHead>
-                  <TableHead className="text-right whitespace-nowrap">Gasto</TableHead>
-                  <TableHead className="text-right">Clics</TableHead>
-                  <TableHead className="text-right whitespace-nowrap">CPC Promedio</TableHead>
-                  <TableHead className="text-right">CTR</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {campaigns.map((campaign) => (
-                  <TableRow key={campaign.name}>
-                    <TableCell className="font-medium">{campaign.name}</TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant={statusVariant[campaign.status]} className={`${statusColor[campaign.status]} hover:${statusColor[campaign.status]}`}>
-                        {campaign.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right whitespace-nowrap">${campaign.budget.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</TableCell>
-                    <TableCell className="text-right whitespace-nowrap">${campaign.spend.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</TableCell>
-                    <TableCell className="text-right whitespace-nowrap">{campaign.clicks.toLocaleString('es-ES')}</TableCell>
-                    <TableCell className="text-right whitespace-nowrap">${campaign.cpc.toFixed(2)}</TableCell>
-                    <TableCell className="text-right whitespace-nowrap">{campaign.ctr.toFixed(1)}%</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <TooltipProvider>
+                <Table>
+                <TableHeader>
+                    <TableRow>
+                    <TableHead className="min-w-[200px]">Nombre</TableHead>
+                    <TableHead className="text-center">Estado</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">Presupuesto</TableHead>
+                    <TableHead className="text-right whitespace-nowrap">Gasto</TableHead>
+                    <TableHead className="text-right">
+                        <Tooltip>
+                            <TooltipTrigger className="flex items-center gap-1 cursor-pointer">
+                                <span>Clics</span>
+                                <Info className="h-3 w-3 text-muted-foreground" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="max-w-xs text-left">El número total de veces que los usuarios han hecho clic en los anuncios de esta campaña.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TableHead>
+                    <TableHead className="text-right">
+                        <Tooltip>
+                            <TooltipTrigger className="flex items-center gap-1 cursor-pointer">
+                                <span>CPC Promedio</span>
+                                <Info className="h-3 w-3 text-muted-foreground" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="max-w-xs text-left">El Costo Por Clic (CPC) promedio es lo que pagas cada vez que alguien hace clic en tu anuncio.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TableHead>
+                    <TableHead className="text-right">
+                        <Tooltip>
+                            <TooltipTrigger className="flex items-center gap-1 cursor-pointer">
+                                <span>CTR</span>
+                                <Info className="h-3 w-3 text-muted-foreground" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="max-w-xs text-left">El Click-Through Rate (CTR) es el porcentaje de personas que vieron tu anuncio e hicieron clic en él.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {campaigns.map((campaign) => (
+                    <TableRow key={campaign.name}>
+                        <TableCell className="font-medium">{campaign.name}</TableCell>
+                        <TableCell className="text-center">
+                        <Badge variant={statusVariant[campaign.status]} className={`${statusColor[campaign.status]} hover:${statusColor[campaign.status]}`}>
+                            {campaign.status}
+                        </Badge>
+                        </TableCell>
+                        <TableCell className="text-right whitespace-nowrap">${campaign.budget.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right whitespace-nowrap">${campaign.spend.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right whitespace-nowrap">{campaign.clicks.toLocaleString('es-ES')}</TableCell>
+                        <TableCell className="text-right whitespace-nowrap">${campaign.cpc.toFixed(2)}</TableCell>
+                        <TableCell className="text-right whitespace-nowrap">{campaign.ctr.toFixed(1)}%</TableCell>
+                    </TableRow>
+                    ))}
+                </TableBody>
+                </Table>
+            </TooltipProvider>
           </CardContent>
         </Card>
       </main>
