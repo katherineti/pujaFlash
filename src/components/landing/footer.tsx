@@ -10,7 +10,7 @@ export function Footer() {
             <span className="font-bold text-lg font-headline">Pujaflash</span>
         </div>
         <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Pujaflash. Todos los derechos reservados.
+            © {new Date().getFullYear()} Pujaflash. Todos los derechos reservados | Desarrollado por Katherine Gutiérrez
         </p>
       </div>
     </footer>
