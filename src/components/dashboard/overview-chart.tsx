@@ -43,7 +43,7 @@ export function OverviewChart() {
     <Card>
       <CardHeader>
         <CardTitle className="font-headline">Resumen de Ingresos</CardTitle>
-        <CardDescription>Enero - Diciembre 2024</CardDescription>
+        <CardDescription>Enero - Diciembre 2025</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
