@@ -19,9 +19,17 @@ const nextConfig = {
   images: {
     // Lista de dominios desde donde se permiten cargar imágenes externas.
     remotePatterns: [
+    //  para cargar las imagenes externas con el dominio: images.unsplash.com
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com', // ¡Añade este dominio!
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      },
+      // para cargar las imagenes externas con el dominio: picsum.photos
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
       },
